@@ -1,45 +1,6 @@
 import cv2
 import numpy as np
 
-
-## TO STACK ALL THE IMAGES IN ONE WINDOW
-def stackImages(imgArray,scale,lables=[]):
-    rows = len(imgArray)
-    cols = len(imgArray[0])
-    rowsAvailable = isinstance(imgArray[0], list)
-    width = imgArray[0][0].shape[1]
-    height = imgArray[0][0].shape[0]
-    if rowsAvailable:
-        for x in range ( 0, rows):
-            for y in range(0, cols):
-                imgArray[x][y] = cv2.resize(imgArray[x][y], (0, 0), None, scale, scale)
-                if len(imgArray[x][y].shape) == 2: imgArray[x][y]= cv2.cvtColor( imgArray[x][y], cv2.COLOR_GRAY2BGR)
-        imageBlank = np.zeros((height, width, 3), np.uint8)
-        hor = [imageBlank]*rows
-        hor_con = [imageBlank]*rows
-        for x in range(0, rows):
-            hor[x] = np.hstack(imgArray[x])
-            hor_con[x] = np.concatenate(imgArray[x])
-        ver = np.vstack(hor)
-        ver_con = np.concatenate(hor)
-    else:
-        for x in range(0, rows):
-            imgArray[x] = cv2.resize(imgArray[x], (0, 0), None, scale, scale)
-            if len(imgArray[x].shape) == 2: imgArray[x] = cv2.cvtColor(imgArray[x], cv2.COLOR_GRAY2BGR)
-        hor= np.hstack(imgArray)
-        hor_con= np.concatenate(imgArray)
-        ver = hor
-    if len(lables) != 0:
-        eachImgWidth= int(ver.shape[1] / cols)
-        eachImgHeight = int(ver.shape[0] / rows)
-        #print(eachImgHeight)
-        for d in range(0, rows):
-            for c in range (0,cols):
-                cv2.rectangle(ver,(c*eachImgWidth,eachImgHeight*d),(c*eachImgWidth+len(lables[d][c])*13+27,30+eachImgHeight*d),(255,255,255),cv2.FILLED)
-                cv2.putText(ver,lables[d][c],(eachImgWidth*c+10,eachImgHeight*d+20),cv2.FONT_HERSHEY_COMPLEX,0.7,(255,0,255),2)
-    return ver
-
-
 def rectContour(contours):
     rectCon = []
     max_area = 0
@@ -56,16 +17,16 @@ def rectContour(contours):
     return rectCon
 
 def getCornerPoints(cont):
-    peri = cv2.arcLength(cont, True) # LENGTH OF CONTOUR
-    approx = cv2.approxPolyDP(cont, 0.02 * peri, True) # APPROXIMATE THE POLY TO GET CORNER POINTS
+    peri = cv2.arcLength(cont, True)
+    approx = cv2.approxPolyDP(cont, 0.02 * peri, True) #kose degerleri
     return approx
 
 
 def reorder(myPoints):
 
-    myPoints = myPoints.reshape((4, 2)) # REMOVE EXTRA BRACKET
+    myPoints = myPoints.reshape((4, 2)) #fazla  koseliyi kaldiralim
     #print(myPoints)
-    myPointsNew = np.zeros((4, 1, 2), np.int32) # NEW MATRIX WITH ARRANGED POINTS
+    myPointsNew = np.zeros((4, 1, 2), np.int32) 
     add = myPoints.sum(1)
     #print(add)
     #print(np.argmax(add))
@@ -77,6 +38,8 @@ def reorder(myPoints):
 
     return myPointsNew
 
+#siklari bolmek icin 20 tane soru vertical/ 5 tane isaret alani +1 tane soru sayisi yazan yer
+#6 horizatanl bolmek
 def splitBoxes(img):
     rows = np.vsplit(img,20) #vertical
     boxes=[]
@@ -86,21 +49,45 @@ def splitBoxes(img):
             boxes.append(box)
     return boxes
 
+#ogrenci numarasi alani icin ayni fonksiyonu kullandik 
+#yuakrdakisini silip sadece bu da kullanilabilir dogru degerler ile
+#ogrenci numarasi alani 0-9 arasi sayilardan 10 tane isaretleme yeri iceriyor
+#10x10seklinde boleriz
+def split_num(img,vertical, horizantal):
+    rows = np.vsplit(img,vertical) #vertical
+    boxes=[]
+    for r in rows:
+        cols= np.hsplit(r,horizantal) #horizantal
+        for box in cols:
+            boxes.append(box)
+    return boxes
+
+#yan yana 3 tane birlesik ders alani oldugu icin onlari 3 ayri 
+#sekle getiriyor
 def splitColumn(img):
     column = np.hsplit(img,3)
     
     return column
 
+
+#puan hesaplama alani
+#soru sayisi dogru cevaplari ve ogrenci cevaplarini aliyor
+#bunlari karsilastirip yeni bir listeye 1/0 seklinde kodluyor
+#1ler toplanip puan hesaplanmis oluyor
 def grading(answers,num_questions,myAnswers):
     grading=[]
+    wrong_ans = []
     for x in range(0,num_questions):
         if answers[x] == myAnswers[x]:
             grading.append(1)
         else:
             grading.append(0)
+            wrong_ans.append(x+1)
     score = (sum(grading)/num_questions)*100 
-    return score
+    return score ,wrong_ans
 
+#piksel degerlerinde kullanici cevaplarini 
+#okuyupu index seklinde listeye kaydediyor
 def user_answers(num_questions,myPixelVal):
     myIndex=[]
     for x in range (0,num_questions):
@@ -109,6 +96,33 @@ def user_answers(num_questions,myPixelVal):
         myIndex.append(myIndexVal[0][0])
     return myIndex
     
+#student id kismi yukardan asagiya dogru karsilastirma yaparak
+#isretli alan tespit edilecegi icin satir ve sutunlari tekrar duzenlemiz gerekti
+#[[1,2,3],[4,5,6],[7,8,9]] ----> [[1,4,7],[2,5,8],[3,6,9]]
+def id_reorder(myPixelVal):
+    duz_liste = []
+    for sutun in range(len(myPixelVal[0])):
+        for satir in range(len(myPixelVal)):
+            duz_liste.append(myPixelVal[satir][sutun])
+    yeni_liste = []
+    satir = []
+    for eleman in duz_liste:
+        satir.append(eleman)
+        if len(satir) == len(myPixelVal):
+            yeni_liste.append(satir)
+            satir = []
+    return yeni_liste
+                
+#ogrenci numarasi kisminin piksel degerine gore hangisinin iseretli
+#oldugunun tespiti    
+def id_answers(vertical_num,myPixelVal):
+    myIndex=[]
+    for x in range (0,vertical_num):
+        arr = myPixelVal[x]
+        myIndexVal = np.where(arr == np.amax(arr))
+        myIndex.append(myIndexVal[0][0])
+    return myIndex
+
 def pixelVal(num_questions,choices,box):
     countR=0 #rows
     countC=0 #column
@@ -119,3 +133,35 @@ def pixelVal(num_questions,choices,box):
         countC += 1
         if (countC==choices):countC=0;countR +=1
     return myPixelVal
+
+#dosyadan cevap anahtarinin okunmasi
+def read_answers(dosya_adi):
+    with open(dosya_adi, 'r') as f:
+        satirlar = f.readlines()
+
+    okunan_veriler = []
+    for satir in satirlar:
+        sutunlar = satir.split()
+        okunan_veriler.append(sutunlar[1])
+        
+    return okunan_veriler
+
+
+#dosyadan okunan cevaplarin numerik hale getirilmesi
+def answers2numbers(answers):
+    num_answers = []
+    for i in answers:
+        if i == "a":
+            num_answers.append(1)
+        elif i == "b":
+            num_answers.append(2)
+        elif i == "c":
+            num_answers.append(3)
+        elif i == "d":
+            num_answers.append(4)
+        elif i == "e":
+            num_answers.append(5)
+        else:
+            print("Oppss Check Txt file")
+    return num_answers
+

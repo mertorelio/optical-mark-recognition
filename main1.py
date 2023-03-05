@@ -56,17 +56,17 @@ if biggestContour.size != 0 and secondContour.size != 0:
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     
     imgWarpColored_1 = cv2.warpPerspective(img, matrix, (wrap_v, wrap_h))
-    imgWarpGray_1 = cv2.cvtColor(imgWarpColored_1,cv2.COLOR_BGR2GRAY) # CONVERT TO GRAYSCALE
-    imgThresh_1 = cv2.threshold(imgWarpGray_1, 170, 255,cv2.THRESH_BINARY_INV )[1] # APPLY THRESHOLD AND INVERSE
+    imgWarpGray_1 = cv2.cvtColor(imgWarpColored_1,cv2.COLOR_BGR2GRAY) 
+    imgThresh_1 = cv2.threshold(imgWarpGray_1, 170, 255,cv2.THRESH_BINARY_INV )[1] 
 
     #second buyuk icin perspektif 
     secondContour=utlis1.reorder(secondContour)
-    pts1_2 = np.float32(secondContour) # PREPARE POINTS FOR WARP
-    pts2_2 = np.float32([[0, 0],[wrap_v, 0], [0, wrap_h],[wrap_v, wrap_h]]) # PREPARE POINTS FOR WARP
+    pts1_2 = np.float32(secondContour) 
+    pts2_2 = np.float32([[0, 0],[wrap_v, 0], [0, wrap_h],[wrap_v, wrap_h]]) 
     matrix_2 = cv2.getPerspectiveTransform(pts1_2, pts2_2)
     imgWarpColored_2 = cv2.warpPerspective(img, matrix_2, (wrap_v, wrap_h))
-    imgWarpGray_2 = cv2.cvtColor(imgWarpColored_2,cv2.COLOR_BGR2GRAY) # CONVERT TO GRAYSCALE
-    imgThresh_2 = cv2.threshold(imgWarpGray_2, 170, 255,cv2.THRESH_BINARY_INV )[1] # APPLY THRESHOLD AND INVERSE
+    imgWarpGray_2 = cv2.cvtColor(imgWarpColored_2,cv2.COLOR_BGR2GRAY) 
+    imgThresh_2 = cv2.threshold(imgWarpGray_2, 170, 255,cv2.THRESH_BINARY_INV )[1] 
     
     
     #student id
@@ -86,14 +86,12 @@ if biggestContour.size != 0 and secondContour.size != 0:
     grading, wrong_ans = utlis1.grading(ans,questions,myIndex)
 
 
-imgBlank = np.zeros_like(img)
-#out_thresh1 = imgThresh_1.r
 
-resim_listesi = [imgThresh_1,imgThresh_2,imgBiggestContour,imgContours]
+
+resim_listesi = [img,imgGray,imgBlur,imgCanny,imgContours,imgBiggestContour,imgThresh_1,imgThresh_2]
 
 for i in range(0,len(resim_listesi)):
     cv2.imwrite(f"images/{i}.jpg",resim_listesi[i])
-
 
 cv2.imshow("Stacked",imgBiggestContour)
 cv2.waitKey(0)

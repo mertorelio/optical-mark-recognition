@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import streamlit as st 
 
 def rectContour(contours):
     rectCon = []
@@ -83,6 +84,17 @@ def grading(answers,num_questions,myAnswers):
         else:
             grading.append(0)
             wrong_ans.append(x+1)
+            if myAnswers[x]== 1:
+                wrong_ans.append("A")
+            if myAnswers[x]== 2:
+                wrong_ans.append("B")
+            if myAnswers[x]== 3:
+                wrong_ans.append("C")
+            if myAnswers[x]== 4:
+                wrong_ans.append("D")
+            if myAnswers[x]== 5:
+                wrong_ans.append("E")
+        
     score = (sum(grading)/num_questions)*100 
     return score ,wrong_ans
 
@@ -165,3 +177,33 @@ def answers2numbers(answers):
             print("Oppss Check Txt file")
     return num_answers
 
+   
+def image_show(images):
+    col1, col2, col3 = st.columns(3)
+    with col1:
+            st.header("0")
+            st.image(images[0],width=200)
+    with col2:
+            st.header("1")
+            st.image(images[1],width=200)
+    with col3:
+            st.header("2")
+            st.image(images[2],width=200)
+            
+    col4, col5= st.columns(2)
+    
+    with col4:
+            st.header("3")
+            st.image(images[4],width=200)
+    with col5:
+            st.header("4")
+            st.image(images[5],width=200)
+    col6, col7= st.columns(2)
+    with col6:
+            st.header("5")
+            st.image(images[6],width=200)
+    
+    with col7:
+            st.header("6")
+            st.image(images[7],width=200)
+    

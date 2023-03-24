@@ -22,17 +22,17 @@
 ## Görüntü İşleme Aşamaları
 Original Image           |  Gray Image | Blur Image
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/1.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/2.jpg)
+![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___0.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___1.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___2.jpg)
 
 Canny Image           |  Contour Image | Find Rectangle
 :-------------------------:|:-------------------------:|:-------------------------:
-![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/3.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/4.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/5.jpg)
+![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___3.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___4.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___5.jpg)
 
 
 
 Biggest Rectangle            |  Second Biggest Rectangle
 :-------------------------:|:-------------------------:
-![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/6.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/7.jpg)
+![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___6.jpg)  |  ![](https://github.com/bozkurtmert0/optical-mark-recognition/blob/main/images/0019060365___7.jpg)
 
 
 
